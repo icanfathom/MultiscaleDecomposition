@@ -37,7 +37,7 @@ Interpolation happens in 5 steps:
 5. Take the average of interpolated values
 
 ###Finding minima and maxima
-This is a straightforward process of looping through each pixel and examining the `k * k` pixels surrounding it. Look at their luminance values; if the center pixel is among the k smallest values, flag it as a minima. If it's among the k largest values, flag it as a maxima. Thus, you're looking for which pixels are *local* minima and maxima with respect to each `k * k` neighborhood. See methods [`findMinima`](https://github.com/icanfathom/sightseer/blob/MultiscaleDecomposition/Sightseer/Canvas.cpp#L123) and [`findMaxima`](https://github.com/icanfathom/sightseer/blob/MultiscaleDecomposition/Sightseer/Canvas.cpp#L165) in `Canvas.cpp` for my implementation.
+This is a straightforward process of looping through each pixel and examining the `k * k` pixels surrounding it. Look at their luminance values; if the center pixel is among the k smallest values, flag it as a minima. If it's among the k largest values, flag it as a maxima. Thus, you're looking for which pixels are *local* minima and maxima with respect to each `k * k` neighborhood. See methods [`findMinima`](https://github.com/icanfathom/MultiscaleDecomposition/blob/master/Sightseer/Canvas.cpp#L123) and [`findMaxima`](https://github.com/icanfathom/MultiscaleDecomposition/blob/master/Sightseer/Canvas.cpp#L165) in `Canvas.cpp` for my implementation.
 
 Once you have a list of minima and maxima (which I called `minimaMap` and `maximaMap`), you run interpolation on both of them **separately**. After running on minima you will have a version of the image where every pixel that was a local minima retains its luminance value and every other pixel smoothly blends between them, and likewise for maxima.
 
@@ -64,7 +64,7 @@ for (int i = 0; i < src->imgRes; i++)
 ```
 
 - `luminance`: an array of floats of size `imgRes` (width * height of the image).
-- The `for` loop iterates through ever pixel, converts it to an RGB value, and then calculates luminance using [`ntscLuminance`](https://github.com/icanfathom/sightseer/blob/MultiscaleDecomposition/Sightseer/Eisel.cpp#L33). (This is a function copied from MatLab that divides an image into 3 channels, Y, I, and Q, with Y being the luminance channel).
+- The `for` loop iterates through ever pixel, converts it to an RGB value, and then calculates luminance using [`ntscLuminance`](https://github.com/icanfathom/MultiscaleDecomposition/blob/master/Sightseer/Eisel.cpp#L33). (This is a function copied from MatLab that divides an image into 3 channels, Y, I, and Q, with Y being the luminance channel).
 - `luminance` now holds the luminance value of every pixel.
 
 ```c++
@@ -198,7 +198,7 @@ for (int i = 0; i < workingValues.size(); i++)
 ```
 
 - Loop through all neighbors:
-  - Calculate this expression: ![Equation](https://github.com/icanfathom/sightseer/blob/MultiscaleDecomposition/Sightseer/Images/csig2.PNG "Equation")</br>
+  - Calculate this expression: ![Equation](https://github.com/icanfathom/MultiscaleDecomposition/blob/master/Sightseer/Images/csig2.PNG "Equation")</br>
   where `l` is luminance of center pixel,</br>
   `xi` is luminance of current pixel,</br>
   `csig` is the value `csig`.
