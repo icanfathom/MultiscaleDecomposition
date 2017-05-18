@@ -1,5 +1,4 @@
-# Multiscale Decomposition
-## via Levin, et. al interpolation
+# Multiscale Decomposition via Levin, et. al interpolation
 
 This is a c++ implementation of multiscale image decomposition as proposed by Subr, Soler, and Durand in *Edge-preserving Multiscale Image Decomposition based on Local Extrema*. The PDF and MatLab code can be found on [Kartic Subr's site](http://home.eps.hw.ac.uk/~ks400/research.html#MSDecompExtrema). I recommend you read the paper for a more in-depth explanation of what the interpolation function is doing. The technique they use is originally from [*Colorization Using Optimization*](http://www.cs.huji.ac.il/~yweiss/Colorization/) by Levin, Lischinski, and Weiss.
 
