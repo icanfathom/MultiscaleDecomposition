@@ -1,4 +1,5 @@
-# Multiscale Decomposition via Levin, et. al interpolation
+# Multiscale Decomposition
+## via Levin, et. al interpolation
 
 This is a c++ implementation of multiscale image decomposition as proposed by Subr, Soler, and Durand in *Edge-preserving Multiscale Image Decomposition based on Local Extrema*. The PDF and MatLab code can be found on [Kartic Subr's site](http://home.eps.hw.ac.uk/~ks400/research.html#MSDecompExtrema). I recommend you read the paper for a more in-depth explanation of what the interpolation function is doing. The technique they use is originally from [*Colorization Using Optimization*](http://www.cs.huji.ac.il/~yweiss/Colorization/) by Levin, Lischinski, and Weiss.
 
@@ -6,12 +7,10 @@ We looked for source code of the interpolation algorithm but could only find Mat
 
 This was a 2016 project by Joseph Merboth under the advisement of Dr. Nathan Gossett.
 
-##Dependencies
-
+## Dependencies
 If you want to run my c++ code you will need two extra frameworks: SDL and Eigen.
 
-###SDL and SDL_Image
-
+### SDL and SDL_Image
 SDL is not required for any of the logic to work. It's merely a code package for image loading and window creation across different operating systems.
 
 The relevant .h and .sdl files are included in my repository, inside the 'include' folder. If those don't work, use the links below to download them yourself. Here are the requirements:
@@ -20,8 +19,7 @@ The relevant .h and .sdl files are included in my repository, inside the 'includ
 
 SDL is available at [libsdl.org](https://libsdl.org/). SDL_Image is available at [libsdl.org/projects/SDL_image/](https://libsdl.org/projects/SDL_image/).
 
-###Eigen
-
+### Eigen
 Eigen is important to the project because it's used to solve the sparse matrix in the interpolation step, which is effectively a system of linear equations. Feel free to substitute another linear algebra package instead of Eigen.
 
 Like SDL, Eigen is included in my repo under 'include/Eigen'. If that doesn't work for you, it should be a simple matter to get your own Eigen download because the whole framework is just a collection of header files.
@@ -30,8 +28,7 @@ Like SDL, Eigen is included in my repo under 'include/Eigen'. If that doesn't wo
 Eigen is available at [eigen.tuxfamily.org](http://eigen.tuxfamily.org/index.php?title=Main_Page).
 
 
-##Code Walkthrough
-
+## Code Walkthrough
 Interpolation happens in 5 steps:
 
 1. Find minima
@@ -40,14 +37,12 @@ Interpolation happens in 5 steps:
 4. Interpolate values between the maxima
 5. Take the average of interpolated values
 
-###Finding minima and maxima
-
+### Finding minima and maxima
 This is a straightforward process of looping through each pixel and examining the `k * k` pixels surrounding it. Look at their luminance values; if the center pixel is among the k smallest values, flag it as a minima. If it's among the k largest values, flag it as a maxima. Thus, you're looking for which pixels are *local* minima and maxima with respect to each `k * k` neighborhood. See methods [`findMinima`](https://github.com/icanfathom/MultiscaleDecomposition/blob/master/Sightseer/Canvas.cpp#L123) and [`findMaxima`](https://github.com/icanfathom/MultiscaleDecomposition/blob/master/Sightseer/Canvas.cpp#L165) in `Canvas.cpp` for my implementation.
 
 Once you have a list of minima and maxima (which I called `minimaMap` and `maximaMap`), you run interpolation on both of them **separately**. After running on minima you will have a version of the image where every pixel that was a local minima retains its luminance value and every other pixel smoothly blends between them, and likewise for maxima.
 
-###Interpolating
-
+### Interpolating
 Interpolation happens in a function called `interpolateExtrema`.
 
 ```c++
@@ -97,7 +92,7 @@ workingValues.reserve(k * k);
   - We'll be processing the image one pixel at a time. Each iteration we will have one 'center' pixel and a number of neighboring pixels. As we go along we're filling the matrix with weights to represent how the neighbor pixels affect the center (to get a smooth interpolation effect). As we insert into the matrix, the row is the index of the 'center' pixel and the column is the index of the neighbor pixel we're looking at right now. Together they give us a coordinate pair, which is a location in our 2D matrix. The value at that location is the weight that relates how those pixels transact.
 - `workingValues`: the values of each neighorhood as we process it.
 
-####Accumulating luminance values
+#### Accumulating luminance values
 
 ```c++
 for (int y = 0; y < src->imgHeight; y++)
@@ -143,7 +138,7 @@ if (x + offsetX >= 0
 
 Now all neighbor's luminance values have been added to `workingValues`.
 
-####Modifying values
+#### Modifying values
 
 ```c++
 float centerLuminance = luminance[src->XYtoIndex(x, y)];
@@ -251,7 +246,7 @@ A.insert(src->XYtoIndex(x, y), src->XYtoIndex(x, y)) = 1.0f;
 
 - Exit both `for` loops. We've gone through every pixel and added weights to the sparse matrix.
 
-####Solving the matrix
+#### Solving the matrix
 
 - We've now filled the matrix `A` with weights representing how each pixel relates to its neighboring pixels.
 - Basically, `A` sets up the constratints, and we'll set `b` to be the pixel values that must be enforced - we want maxima or minima to maintain their values while all other pixels change to accommodate them. Then, when we solve for `x`, we'll have a list of pixel values that obey the constraints of `A`.
