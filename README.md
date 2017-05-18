@@ -7,7 +7,7 @@ We looked for source code of the interpolation algorithm but could only find Mat
 This was a 2016 project by Joseph Merboth under the advisement of Dr. Nathan Gossett.
 
 ## Dependencies
-If you want to run my c++ code you will need two extra frameworks: SDL and Eigen.
+To run my c++ code you will need two extra frameworks: SDL and Eigen.
 
 ### SDL and SDL_Image
 SDL is not required for any of the logic to work. It's merely a code package for image loading and window creation across different operating systems.
