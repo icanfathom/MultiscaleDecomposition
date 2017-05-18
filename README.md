@@ -7,9 +7,11 @@ We looked for source code of the interpolation algorithm but could only find Mat
 This was a 2016 project by Joseph Merboth under the advisement of Dr. Nathan Gossett.
 
 ##Dependencies
+
 If you want to run my c++ code you will need two extra frameworks: SDL and Eigen.
 
 ###SDL and SDL_Image
+
 SDL is not required for any of the logic to work. It's merely a code package for image loading and window creation across different operating systems.
 
 The relevant .h and .sdl files are included in my repository, inside the 'include' folder. If those don't work, use the links below to download them yourself. Here are the requirements:
@@ -19,6 +21,7 @@ The relevant .h and .sdl files are included in my repository, inside the 'includ
 SDL is available at [libsdl.org](https://libsdl.org/). SDL_Image is available at [libsdl.org/projects/SDL_image/](https://libsdl.org/projects/SDL_image/).
 
 ###Eigen
+
 Eigen is important to the project because it's used to solve the sparse matrix in the interpolation step, which is effectively a system of linear equations. Feel free to substitute another linear algebra package instead of Eigen.
 
 Like SDL, Eigen is included in my repo under 'include/Eigen'. If that doesn't work for you, it should be a simple matter to get your own Eigen download because the whole framework is just a collection of header files.
@@ -28,6 +31,7 @@ Eigen is available at [eigen.tuxfamily.org](http://eigen.tuxfamily.org/index.php
 
 
 ##Code Walkthrough
+
 Interpolation happens in 5 steps:
 
 1. Find minima
@@ -37,11 +41,13 @@ Interpolation happens in 5 steps:
 5. Take the average of interpolated values
 
 ###Finding minima and maxima
+
 This is a straightforward process of looping through each pixel and examining the `k * k` pixels surrounding it. Look at their luminance values; if the center pixel is among the k smallest values, flag it as a minima. If it's among the k largest values, flag it as a maxima. Thus, you're looking for which pixels are *local* minima and maxima with respect to each `k * k` neighborhood. See methods [`findMinima`](https://github.com/icanfathom/MultiscaleDecomposition/blob/master/Sightseer/Canvas.cpp#L123) and [`findMaxima`](https://github.com/icanfathom/MultiscaleDecomposition/blob/master/Sightseer/Canvas.cpp#L165) in `Canvas.cpp` for my implementation.
 
 Once you have a list of minima and maxima (which I called `minimaMap` and `maximaMap`), you run interpolation on both of them **separately**. After running on minima you will have a version of the image where every pixel that was a local minima retains its luminance value and every other pixel smoothly blends between them, and likewise for maxima.
 
 ###Interpolating
+
 Interpolation happens in a function called `interpolateExtrema`.
 
 ```c++
